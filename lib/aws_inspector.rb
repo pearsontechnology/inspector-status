@@ -1,7 +1,7 @@
 # Set's up and runs AWS Inspector service against newly created CI components
 class Inspector
+  include Logging
   include InspectorLib
-
   def initialize(options)
     @name = "#{options['aws_name_prefix']}-#{SecureRandom.hex(5)}"
     @assessment_duration = options['asset_duration'].to_i
@@ -29,12 +29,14 @@ class Inspector
   private
 
   def delete_resources
+    logger.info('Deleting Resources')
     allow_fail { aws.delete_assessment_target(assessment_target_arn: @assessment_target_arn) unless @assessment_target_arn.nil? }
     allow_fail { aws.delete_assessment_template(assessment_template_arn: @assessment_template_arn) unless @assessment_template_arn.nil? }
     allow_fail { aws.delete_assessment_run(assessment_run_arn: @assessment_run_arn) unless @assessment_run_arn.nil? }
   end
 
   def stop_resources
+    logger.info('Stopping Resources')
     allow_fail { aws.stop_assessment_run(assessment_run_arn: @assessment_run_arn) }
     sleep [@assessment_duration, 60].min # Give us at most 60 seconds to shutdown the assessment run
   end
@@ -46,6 +48,7 @@ class Inspector
   end
 
   def wait_for_assessment_run
+    logger.info('Waiting for assesment to complete')
     Timeout.timeout(@assessment_duration + 180) do
       until assessment_completed? # rubocop:disable Style/WhileUntilModifier
         sleep 5
@@ -58,6 +61,7 @@ class Inspector
   end
 
   def create_template
+    logger.info('Creating Template')
     @assessment_template_arn = aws.create_assessment_template(assessment_target_arn: @assessment_target_arn,
                                                               assessment_template_name: "#{@name}-assessment-template",
                                                               duration_in_seconds: @assessment_duration,
@@ -114,10 +118,12 @@ class Inspector
   end
 
   def create_resource_group
+    logger.info('Creating Resource Group')
     @resource_group_arn = aws.create_resource_group(resource_group_tags: @resource_target_tags).resource_group_arn
   end
 
   def create_target
+    logger.info('Creating Target')
     @assessment_target_arn = aws.create_assessment_target(assessment_target_name: "#{@name}-assessment-target", resource_group_arn: @resource_group_arn).assessment_target_arn
   end
 end

@@ -5,6 +5,7 @@ require 'optparse'
 require 'securerandom'
 require 'timeout'
 require 'yaml'
+require 'logger'
 
 require_relative 'lib/aws_inspector_lib.rb'
 require_relative 'lib/aws_inspector_config.rb'
