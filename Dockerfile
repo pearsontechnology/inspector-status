@@ -1,11 +1,24 @@
-FROM ruby:2.3.7-alpine
+#############################################################
+## DO NOT CHANGE! MUST INHERIT FROM PEARSON'S PARENT IMAGE ##
+#############################################################
+FROM pearsontechnology/image-base:latest
+#############################################################
 
-RUN mkdir /inspector && apk add --update build-base libffi-dev
+#############################################################################
+## USE THIS LOGIC TO TRACK INFO FROM THE IMAGE USED TO BUILD THE CONTAINER ##
+#############################################################################
+ARG GIT_TAG_REF='master'
+COPY Dockerfile /etc/docker-app-image-info.txt
+RUN  printf "\nGIT_TAG_REF=${GIT_TAG_REF}\n" >> /etc/docker-app-image-info.txt
 
-COPY . /inspector
 
-WORKDIR /inspector
+###############################################
+## ADD YOUR CUSTOM DOCKER INSTRUCTIONS BELOW ##
+###############################################
 
-RUN gem install bundler && bundle install
+LABEL maintainer "you@pearson.com"
 
-ENTRYPOINT ["/usr/local/bin/ruby", "/inspector/inspector.rb"]
+COPY docker-entrypoint.sh ~/docker-entrypoint.sh
+
+ENTRYPOINT ["~/docker-entrypoint.sh"]
+CMD []

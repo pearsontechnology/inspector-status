@@ -1,0 +1,13 @@
+# WARNING: This file is deployed from template. Raise a pull request against image-template to change.
+version: '2'
+
+services:
+   image-template-test:
+     build: .
+     container_name: "image-template-test" #[your repo name]-test.
+     hostname: "image-template-test"
+     volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+     environment:
+       - KEY=VALUE
+       - KEY2=${ENV_VAR_ON_HOST}

@@ -1,0 +1,4 @@
+name: your-repo
+title: InSpec tests for your-repo
+maintainer: your-name
+version: 1.0.0
