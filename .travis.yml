@@ -1,0 +1,36 @@
+# WARNING: This file is deployed from template. Raise a pull request against image-template to change.
+
+language: python
+dist: trusty
+sudo: false
+
+env:
+  global:
+    - REPO_NAME=$(echo ${TRAVIS_REPO_SLUG#*/})
+    - MODULE=${REPO_NAME#image-}
+
+services:
+  - docker
+
+before_install:
+  - (cd ${TRAVIS_BUILD_DIR}/travis && ./decrypt.sh && cp ${TRAVIS_BUILD_DIR}/travis/credentials ~/.aws)
+
+install:
+  - ${TRAVIS_BUILD_DIR}/travis/install/dependencies.sh
+
+script:
+  - if test $TRAVIS_PULL_REQUEST != "false" ; then
+    ${TRAVIS_BUILD_DIR}/travis/script/test.sh && ${TRAVIS_BUILD_DIR}/travis/script/v_scan.sh ; fi
+
+after_success:
+  - if test $TRAVIS_PULL_REQUEST = "false" && test $TRAVIS_BRANCH = "master" ; then
+    ${TRAVIS_BUILD_DIR}/travis/after_success/after_success.sh ; fi
+
+notifications:
+  slack:
+    rooms:
+      - pearsoncloudplatforms:JLhlGFXPgP1xw0aYeOq9Pwsk#build-bitesize
+
+branches:
+  only:
+  - master
