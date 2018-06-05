@@ -3,7 +3,7 @@
 #
 
 # Name prefixed to all resources created in AWS
-aws_name_prefix: mycipipeline
+aws_name_prefix: pipeline
 
 # The minimum failures of each type to cause an exit status of the found issues. E.g. if you set severity to 3.0, anything higher than that will trigger a non-clean exit
 failure_metrics:
@@ -17,14 +17,8 @@ rules_to_run:
   - Common Vulnerabilities and Exposures
   - CIS Operating System Security Configuration Benchmarks
 
-# The tags to target during our inspection
-target_tags:
-  auditable: true
-  inspectable: true
-  Name: ImCompromised
-
 # The duration (in seconds) to scan our resources for
 asset_duration: 60
-
+ignore_no_results: true
 # Should AWS Created resources be deleted at the end of the assessment (Note: The run/findings will be kept)
 cleanup_resources: true

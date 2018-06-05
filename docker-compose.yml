@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+   image-template:
+     build: .
+     container_name: "image-template"
+     hostname: "image-template"

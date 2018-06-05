@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+   image-template-test:
+     build: .
+     container_name: "image-template-test"
+     hostname: "image-template-test"
+     volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
